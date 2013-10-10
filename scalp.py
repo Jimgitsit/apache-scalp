@@ -417,22 +417,21 @@ def generate_text_file(flag, access, filters, odir):
     fname = os.path.abspath(odir + os.sep + fname)
     try:
         out = open(fname, 'w')
-        out.write(txt_header)
-        out.write("Scalped file: %s\n" % access)
-        out.write("Creation date: %s\n\n" % curtime)
         for attack_type in flag:
-            if attack_type in names:
-                out.write("Attack %s (%s)\n" % (names[attack_type], attack_type))
-            else:
-                out.write("Attack type: %s\n" % attack_type)
+
             impacts = flag[attack_type].keys()
             impacts.sort(reverse=True)
-
+ 
             for i in impacts:
-                out.write("\n\t### Impact %d\n" % int(i))
                 for e in flag[attack_type][i]:
-                    out.write("\t%s" % e[3])
-                    out.write("\tReason: \"%s\"\n\n" % e[2])
+                   if attack_type in names:
+                       out.write("type = '%s (%s)', " % (names[attack_type], attack_type))
+                   else:
+                       out.write("type = '%s', " % attack_type)
+                   out.write("impact = '%d', " % int(i))
+                   out.write("log = '%s', " % e[3].strip())
+                   out.write("reason = '\"%s\"'" % e[2])
+                   out.write("\n")
         out.close()
     except IOError:
         print "Cannot open the file:", fname
